@@ -1,7 +1,8 @@
 import '../flutter_flow/flutter_flow_icon_button.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
-import '../custom_code/actions/index.dart' as actions;
+import '../flutter_flow/upload_media.dart';
+import '../flutter_flow/custom_functions.dart' as functions;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
+  LatLng? currentUserLocationValue;
 
   @override
   void initState() {
@@ -63,31 +65,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Text(
-                getJsonField(
-                  _model.imageData,
-                  r'''$.file_type''',
-                ).toString(),
-                style: FlutterFlowTheme.of(context).bodyText1,
-              ),
-              Text(
-                valueOrDefault<String>(
-                  getJsonField(
-                    _model.imageData,
-                    r'''$.file_name''',
-                  ).toString(),
-                  'No Data',
-                ),
-                style: FlutterFlowTheme.of(context).bodyText1,
-              ),
-              Text(
-                'Hello World',
-                style: FlutterFlowTheme.of(context).bodyText1,
-              ),
-              Text(
-                'Hello World',
-                style: FlutterFlowTheme.of(context).bodyText1,
-              ),
               Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -112,10 +89,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 color: FlutterFlowTheme.of(context).primaryText,
                                 size: 30,
                               ),
-                              onPressed: () async {
-                                _model.imageData = await actions.getImage();
-
-                                setState(() {});
+                              onPressed: () {
+                                print('IconButton pressed ...');
                               },
                             ),
                             Text(
@@ -139,8 +114,54 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 color: FlutterFlowTheme.of(context).primaryText,
                                 size: 30,
                               ),
-                              onPressed: () {
-                                print('IconButton pressed ...');
+                              onPressed: () async {
+                                currentUserLocationValue =
+                                    await getCurrentUserLocation(
+                                        defaultLocation: LatLng(0.0, 0.0));
+                                final selectedMedia = await selectMedia(
+                                  maxWidth: 800.00,
+                                  maxHeight: 1000.00,
+                                  imageQuality: 60,
+                                  multiImage: false,
+                                );
+                                if (selectedMedia != null &&
+                                    selectedMedia.every((m) =>
+                                        validateFileFormat(
+                                            m.storagePath, context))) {
+                                  setState(
+                                      () => _model.isMediaUploading = true);
+                                  var selectedUploadedFiles =
+                                      <FFUploadedFile>[];
+
+                                  try {
+                                    selectedUploadedFiles = selectedMedia
+                                        .map((m) => FFUploadedFile(
+                                              name:
+                                                  m.storagePath.split('/').last,
+                                              bytes: m.bytes,
+                                              height: m.dimensions?.height,
+                                              width: m.dimensions?.width,
+                                            ))
+                                        .toList();
+                                  } finally {
+                                    _model.isMediaUploading = false;
+                                  }
+                                  if (selectedUploadedFiles.length ==
+                                      selectedMedia.length) {
+                                    setState(() {
+                                      _model.uploadedLocalFile =
+                                          selectedUploadedFiles.first;
+                                    });
+                                  } else {
+                                    setState(() {});
+                                    return;
+                                  }
+                                }
+
+                                setState(() {
+                                  FFAppState().location =
+                                      currentUserLocationValue;
+                                });
                               },
                             ),
                             Text(
@@ -153,6 +174,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     ),
                   ),
                 ],
+              ),
+              Padding(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 30, 0, 0),
+                child: Text(
+                  valueOrDefault<String>(
+                    functions.convertLatLongToString(FFAppState().location),
+                    'Not Assigned',
+                  ),
+                  style: FlutterFlowTheme.of(context).bodyText1,
+                ),
               ),
             ],
           ),

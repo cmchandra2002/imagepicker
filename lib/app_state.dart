@@ -15,6 +15,8 @@ class FFAppState extends ChangeNotifier {
 
   Future initializePersistedState() async {
     prefs = await SharedPreferences.getInstance();
+    _imageurl = prefs.getString('ff_imageurl') ?? _imageurl;
+    _location = _latLngFromString(prefs.getString('ff_location')) ?? _location;
   }
 
   void update(VoidCallback callback) {
@@ -28,6 +30,22 @@ class FFAppState extends ChangeNotifier {
   String get image => _image;
   set image(String _value) {
     _image = _value;
+  }
+
+  String _imageurl = '';
+  String get imageurl => _imageurl;
+  set imageurl(String _value) {
+    _imageurl = _value;
+    prefs.setString('ff_imageurl', _value);
+  }
+
+  LatLng? _location = LatLng(18.7747161, 84.40938760000002);
+  LatLng? get location => _location;
+  set location(LatLng? _value) {
+    _location = _value;
+    _value != null
+        ? prefs.setString('ff_location', _value.serialize())
+        : prefs.remove('ff_location');
   }
 }
 
