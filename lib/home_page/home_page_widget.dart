@@ -182,7 +182,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                     functions.convertLatLongToString(FFAppState().location),
                     'Not Assigned',
                   ),
-                  style: FlutterFlowTheme.of(context).bodyText1,
+                  style: FlutterFlowTheme.of(context).bodyText1.override(
+                        fontFamily: 'Poppins',
+                        color: Colors.black,
+                      ),
                 ),
               ),
             ],
