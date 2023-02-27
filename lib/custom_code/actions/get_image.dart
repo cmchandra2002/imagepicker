@@ -21,12 +21,40 @@ Future<dynamic> getImage() async {
   String fileType = "No file name";
   final image = await imagepicker.pickImage(source: ImageSource.camera);
 
+<<<<<<< Updated upstream
   imageFile = File(image!.path);
   print(imageFile);
   fileName = path.basename(image.path);
   // fileSizeinBytes = imageFile.length() as int;
   fileType = lookupMimeType(imageFile.path) ?? 'Unknown';
 
+=======
+  //   position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high);
+  //   // Do something with the location
+  // } else {
+  //   permissionStatus = await Permission.locationWhenInUse.request();
+  //   if (permissionStatus.isGranted) {
+  //     // Location permission granted by user
+  //     // Get the user's location
+  //     position = await Geolocator.getCurrentPosition(
+  //         desiredAccuracy: LocationAccuracy.high);
+  //     // Do something with the location
+  //   } else {
+  //     // Location permission denied by user
+  //     // Show an error message or prompt the user to grant permission manually in the device settings
+  //     print("Denied");
+  //   }
+  // }
+  // var imageFile = File(image!.path);
+  var fileStat = await FileStat.stat(image!.path);
+  fileName = path.basename(image.path);
+  // fileSizeinBytes = imageFile.lengthSync();
+  fileSizeinBytes = fileStat.size;
+  // fileType = lookupMimeType(imageFile.path) ?? 'Unknown';
+  // latitude = position!.latitude;
+  // longitude = position!.longitude;
+>>>>>>> Stashed changes
   dynamic RequiredData = {
     "file_name": fileName,
     // "file_size": fileSizeinBytes,
