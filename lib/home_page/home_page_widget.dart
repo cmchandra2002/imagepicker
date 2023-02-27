@@ -66,7 +66,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               Text(
                 getJsonField(
                   _model.imageData,
-                  r'''$.file_size''',
+                  r'''$.file_type''',
                 ).toString(),
                 style: FlutterFlowTheme.of(context).bodyText1,
               ),
